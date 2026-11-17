@@ -75,3 +75,27 @@ jobs:
     steps:
       - id: deploy
         uses: actions/deploy-pages@v4
+
+  # Hält HTTPS für rewerichter.de aktiv: stößt die DNS-Prüfung von GitHub Pages an und
+  # schaltet „Enforce HTTPS“ ein, sobald das Zertifikat ausgestellt ist. Scheitert nie den Lauf.
+  https:
+    needs: veroeffentlichen
+    runs-on: ubuntu-latest
+    permissions:
+      pages: write
+    env:
+      GH_TOKEN: ${{ github.token }}
+      REPO: ${{ github.repository }}
+    steps:
+      - name: DNS-Prüfung anstoßen
+        run: gh api "repos/$REPO/pages/health" --jq '.domain | {host, is_valid, reason, enforces_https, responds_to_https}' || echo "Prüfung nicht abrufbar (Berechtigung oder läuft noch)"
+
+      - name: HTTPS erzwingen, sobald möglich
+        run: |
+          gh api "repos/$REPO/pages" --jq '{cname, https_enforced, cert: .https_certificate.state}' || true
+          if [ "$(gh api "repos/$REPO/pages" --jq '.https_enforced' 2>/dev/null)" = "true" ]; then
+            echo "HTTPS ist bereits erzwungen."
+          else
+            gh api -X PUT "repos/$REPO/pages" -f cname=rewerichter.de -f build_type=workflow -F https_enforced=true \
+              && echo "HTTPS jetzt erzwungen." || echo "Noch nicht möglich, nächster Versuch beim nächsten Lauf."
+          fi
