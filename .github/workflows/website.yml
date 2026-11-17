@@ -1,0 +1,77 @@
+# Vorlage für das öffentliche Website-Repo: dort als .github/workflows/website.yml ablegen,
+# dazu tools/prospekt_holen.py und tools/website_social.py nach scripts/.
+# In den Repo-Einstellungen unter Pages die Quelle „GitHub Actions“ wählen.
+#
+# Der Prospekt wird bei jeder Veröffentlichung frisch von Publitas geholt (wie auf der
+# REWE-Marktseite) und nur in die veröffentlichte Seite gepackt, nicht ins Repo committet.
+# So wächst das Repo nicht jede Woche um viele MB.
+
+name: Website veröffentlichen
+
+on:
+  push:
+    branches: [main]
+  schedule:
+    # Sonntag 0:00 deutsche Zeit = Samstag 23:00 UTC (Winter) bzw. 22:00 UTC (Sommer).
+    # Beide Läufe sind harmlos: Das Skript entscheidet selbst nach deutscher Zeit, welche Woche dran ist.
+    - cron: "0 22 * * 6"
+    - cron: "0 23 * * 6"
+    # Nachholen am Sonntagmorgen, falls der Prospekt um Mitternacht noch nicht online war
+    - cron: "0 5 * * 0"
+    - cron: "0 9 * * 0"
+    # Alle 2 Stunden neu bauen, damit neue Instagram-Beiträge schnell erscheinen
+    - cron: "15 */2 * * *"
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  pages: write
+  id-token: write
+
+concurrency:
+  group: website
+  cancel-in-progress: true
+
+jobs:
+  bauen:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+
+      # Instagram-Raster (nur Beiträge ohne Angebote) und „Teddy kocht“ aus dem öffentlichen Social-Repo
+      - uses: actions/checkout@v4
+        with:
+          repository: ReweRichter/rewe-richter-social
+          path: _social
+
+      - name: Instagram und Rezepte übernehmen
+        run: |
+          pip install --quiet pillow
+          python scripts/website_social.py --social _social --ziel .
+          rm -rf _social
+
+      - name: Prospekt holen
+        run: |
+          python scripts/prospekt_holen.py --ziel . || rc=$?
+          # 2 = für diese Woche noch nicht online: Seite trotzdem veröffentlichen,
+          # sie zeigt dann den Link zu rewe.de statt eines abgelaufenen Prospekts.
+          if [ "${rc:-0}" != "0" ] && [ "${rc}" != "2" ]; then exit "$rc"; fi
+
+      - uses: actions/upload-pages-artifact@v3
+        with:
+          path: .
+
+  veroeffentlichen:
+    needs: bauen
+    runs-on: ubuntu-latest
+    environment:
+      name: github-pages
+      url: ${{ steps.deploy.outputs.page_url }}
+    steps:
+      - id: deploy
+        uses: actions/deploy-pages@v4

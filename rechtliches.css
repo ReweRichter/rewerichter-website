@@ -1,0 +1,16 @@
+@font-face{font-family:"REWE Mato";src:url(img/REWEMatoWebW01-Regular.woff2) format("woff2");font-weight:400;font-display:swap}
+@font-face{font-family:"REWE Mato";src:url(img/REWEMatoWebW01-Bold.woff2) format("woff2");font-weight:700;font-display:swap}
+:root{--rot:#cc071e;--zartbitter:#2d2416;--rot-10:#fae6e8}
+*{box-sizing:border-box}
+body{margin:0;font-family:"REWE Mato",system-ui,sans-serif;font-size:1.0625rem;line-height:1.6;color:var(--zartbitter);background:#fff;-webkit-font-smoothing:antialiased}
+header{background:var(--rot);padding:20px clamp(16px,5vw,72px)}
+header img{width:clamp(150px,22vw,230px);height:auto;background:#fff;padding:10px 14px;border-radius:10px;display:block}
+main{max-width:720px;margin:0 auto;padding:48px clamp(16px,5vw,32px) 64px}
+h1{font-weight:400;font-size:clamp(2.6rem,7vw,4rem);line-height:1;color:var(--rot);margin:0 0 12px}
+h2{font-size:1.2rem;margin:32px 0 6px}
+p{margin:0 0 10px}
+a{color:var(--rot)}
+a:focus-visible{outline:3px solid var(--rot);outline-offset:3px}
+.klein{font-size:.9rem;opacity:.8}
+footer{background:var(--zartbitter);color:#fff;padding:28px clamp(16px,5vw,72px);display:flex;gap:24px}
+footer a{color:#fff}

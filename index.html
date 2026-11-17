@@ -1,0 +1,565 @@
+<!doctype html>
+<html lang="de">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>REWE Richter – Dortmund-Kirchlinde</title>
+<meta name="description" content="Teddys Angebote der Woche, Öffnungszeiten und die Spielwelt von REWE Richter, Frohlinder Straße 12 in Dortmund.">
+<style>
+@font-face{font-family:"REWE Mato";src:url(img/REWEMatoWebW01-Regular.woff2) format("woff2");font-weight:400;font-display:swap}
+@font-face{font-family:"REWE Mato";src:url(img/REWEMatoWebW01-Bold.woff2) format("woff2");font-weight:700;font-display:swap}
+
+:root{
+  --rot:#cc071e; --rot-10:#fae6e8;
+  --zartbitter:#2d2416; --zartbitter-10:#eae9e8;
+  --pflaume:#86486e; --pflaume-10:#f3edf1;
+  --blaubeer:#466c8e; --blaubeer-10:#edf0f4;
+  --salbei:#79977e; --salbei-10:#f2f5f2;
+  --raps:#fdc600; --mango:#f7a82d; --fleur:#8abbd7; --weiss:#fff;
+  --gutter:clamp(16px,5vw,72px);
+  --maxw:1240px;
+  --h-xl:clamp(3rem,10vw,7.5rem);
+  --h-l:clamp(2.4rem,7vw,5rem);
+  --t-statement:clamp(1.6rem,3.6vw,3.1rem);
+  --t-body:1.125rem;
+  --ease-spring:cubic-bezier(.34,1.56,.64,1);
+}
+*{box-sizing:border-box}
+html{scroll-behavior:smooth}
+@media (prefers-reduced-motion:reduce){html{scroll-behavior:auto}}
+body{margin:0;font-family:"REWE Mato",system-ui,sans-serif;font-size:var(--t-body);line-height:1.55;color:var(--weiss);background:var(--zartbitter);-webkit-font-smoothing:antialiased}
+img{display:block;max-width:100%;height:auto}
+a{color:inherit}
+h1,h2{font-weight:400;line-height:.98;letter-spacing:-.02em;margin:0;text-wrap:balance}
+h1{font-size:var(--h-xl)}
+h2{font-size:var(--h-l)}
+p{margin:0}
+:focus-visible{outline:3px solid var(--raps);outline-offset:3px;border-radius:4px}
+.skip{position:absolute;left:-999px;top:8px;background:var(--raps);color:var(--zartbitter);padding:10px 16px;z-index:100}
+.skip:focus{left:8px}
+
+.buehne{position:relative;padding:clamp(56px,9vw,120px) var(--gutter)}
+.innen{max-width:var(--maxw);margin:0 auto;position:relative}
+
+/* Knöpfe: Groß-/Kleinschreibung, kein Pfeil */
+.knopf{display:inline-flex;align-items:center;min-height:52px;padding:0 28px;border-radius:999px;font:700 1.0625rem/1 "REWE Mato",sans-serif;text-decoration:none;background:var(--weiss);color:var(--zartbitter);transition:transform .15s ease,background-color .15s ease;touch-action:manipulation}
+.knopf:hover{transform:translateY(-2px)}
+.knopf:active{transform:scale(.97)}
+.knopf.leise{background:transparent;color:var(--weiss);box-shadow:inset 0 0 0 2px currentColor}
+
+/* Teddy: das eine Besondere, steht auf der Kante zur nächsten Bühne */
+.teddy{position:absolute;z-index:5;pointer-events:none}
+.teddy img{filter:drop-shadow(0 18px 24px rgba(45,36,22,.35))}
+html,body{overflow-x:clip}
+
+/* Scroll-Bewegung: --p läuft von 0 (Teddy kommt ins Bild) bis 1 (Ruheposition).
+   Ohne JavaScript oder bei „weniger Bewegung“ bleibt alles in Ruheposition. */
+@media (prefers-reduced-motion:no-preference){
+  .teddy[data-bewegung] img{will-change:transform;transform-origin:50% 100%}
+  .teddy[data-bewegung="start"] img{transform:translateY(calc(var(--p,0) * 14%)) rotate(calc(var(--p,0) * -6deg))}
+  .start .titel{transform:translateY(calc(var(--hp,0) * -40px)) rotate(calc(4deg + var(--hp,0) * 5deg))}
+  .teddy[data-bewegung="heben"] img{transform:translateY(calc((1 - var(--p,1)) * 32%)) rotate(calc((1 - var(--p,1)) * -7deg))}
+  .teddy[data-bewegung="reinschauen"] img{transform:translateX(calc((1 - var(--p,1)) * 45%)) rotate(calc((1 - var(--p,1)) * 12deg))}
+  .teddy[data-bewegung="sitzen"] img{transform-origin:50% 64%;transform:translateY(calc((1 - var(--p,1)) * -14%)) rotate(calc((1 - var(--p,1)) * -9deg))}
+  .teddy[data-bewegung="fahren"] img{transform:translateX(calc((1 - var(--p,1)) * 38%)) rotate(calc((1 - var(--p,1)) * 3deg))}
+  .teddy[data-bewegung="wippen"] img{transform:translateY(calc((1 - var(--p,1)) * 26%)) rotate(calc((var(--p,1) - .6) * 12deg))}
+}
+.ki{position:absolute;right:0;bottom:8%;font-size:13px;line-height:1;padding:6px 10px;border-radius:999px;background:rgba(45,36,22,.72);color:#fff;white-space:nowrap}
+
+/* Kopf */
+.kopf{position:absolute;inset:0 0 auto 0;z-index:10;display:flex;justify-content:space-between;align-items:center;gap:16px;padding:20px var(--gutter)}
+.kopf .logo{width:clamp(150px,22vw,230px);background:var(--weiss);padding:10px 14px;border-radius:10px}
+.kopf nav{display:none;gap:28px}
+.kopf nav a{text-decoration:none;font-size:1rem}
+.kopf nav a:hover{text-decoration:underline;text-underline-offset:4px}
+@media (min-width:900px){.kopf nav{display:flex}}
+
+/* Start: rote Bühne */
+.start{background:var(--rot);padding-top:clamp(120px,14vw,170px);padding-bottom:0;overflow:visible}
+.start .innen{display:grid;gap:40px}
+.start h1{color:var(--rot-10);max-width:9ch}
+.start .sub{margin-top:24px;max-width:34ch;font-size:clamp(1.15rem,1.8vw,1.4rem)}
+.start .knoepfe{display:flex;flex-wrap:wrap;gap:12px;margin-top:32px}
+.stoerer{position:absolute;z-index:6;display:grid;place-content:center;text-align:center;width:150px;aspect-ratio:1;border-radius:50%;background:var(--raps);color:var(--zartbitter);font-weight:700;line-height:1.1;font-size:1.05rem;transform:rotate(-7deg);padding:18px}
+.stoerer small{display:block;font-weight:400;font-size:.85rem;margin-top:4px}
+.prospekt-szene{position:relative;min-height:520px}
+.titel{position:absolute;right:4%;top:0;width:min(330px,62%);transform:rotate(4deg);
+  -webkit-mask:url(img/masterform.png) center/100% 100% no-repeat;mask:url(img/masterform.png) center/100% 100% no-repeat}
+.start .teddy{left:-4%;bottom:-70px;width:min(400px,70%)}
+.start .stoerer{right:-6px;top:-48px;width:124px}
+@media (min-width:900px){.start .stoerer{left:auto;right:-10px;top:-56px;width:150px}}
+@media (min-width:900px){
+  .start .innen{grid-template-columns:1.1fr .9fr;align-items:start}
+  .start .text{padding-bottom:160px}
+  .prospekt-szene{min-height:640px}
+  .titel{width:360px}
+  .start .teddy{left:-18%;bottom:-90px;width:440px}
+}
+@media (prefers-reduced-motion:no-preference){
+  .start .teddy{animation:hops .9s var(--ease-spring) .2s both}
+  @keyframes hops{from{transform:translateY(40%);opacity:0}to{transform:none;opacity:1}}
+}
+
+/* Prospekt blättern: helle Rot-Stufe */
+.blaettern{background:var(--rot-10);color:var(--zartbitter);padding-top:clamp(120px,12vw,160px)}
+.blaettern h2{color:var(--rot);font-size:clamp(2rem,5vw,3.4rem)}
+.blaettern .kopfzeile{display:flex;flex-wrap:wrap;justify-content:space-between;align-items:end;gap:20px;margin-bottom:28px}
+.leiste{display:flex;gap:20px;overflow-x:auto;scroll-snap-type:x mandatory;padding-bottom:16px;overscroll-behavior-x:contain}
+.leiste figure{flex:0 0 min(78vw,360px);margin:0;scroll-snap-align:start}
+.leiste img{border-radius:6px;box-shadow:0 2px 0 rgba(45,36,22,.08)}
+.leiste figcaption{font-size:.95rem;margin-top:8px}
+.leiste button{all:unset;cursor:zoom-in;display:block;border-radius:6px}
+.leiste button:focus-visible{outline:3px solid var(--rot);outline-offset:3px}
+.leiste img{aspect-ratio:800/1410;width:100%;object-fit:cover;background:#fff}
+.ersatz{background:#fff;border-radius:12px;padding:24px;max-width:560px}
+.lupe{border:0;padding:0;background:transparent;max-width:min(96vw,760px);max-height:96vh}
+.lupe::backdrop{background:rgba(45,36,22,.88)}
+.lupe img{max-height:84vh;width:auto;margin:0 auto;border-radius:6px}
+.lupe .steuer{display:flex;justify-content:center;gap:10px;margin-top:12px}
+.lupe .steuer button{min-width:52px;height:52px;border-radius:999px;border:0;background:#fff;color:var(--zartbitter);font:700 1rem "REWE Mato",sans-serif;padding:0 18px;cursor:pointer}
+.blaettern .knopf{background:var(--rot);color:#fff}
+.pfeile{display:flex;gap:10px}
+.pfeile button{width:52px;height:52px;border-radius:50%;border:2px solid var(--rot);background:transparent;color:var(--rot);font-size:1.4rem;cursor:pointer}
+.pfeile button:hover{background:var(--rot);color:#fff}
+.hinweis{font-size:.95rem;margin-top:16px;max-width:60ch}
+
+/* Treuepunkt-Aktion: Fleur de Sel, Schrift Zartbitter. Texte und Preise nur aus aktion/treuepunkte.json */
+.aktion{background:var(--fleur);color:var(--zartbitter)}
+.aktion h2{color:var(--zartbitter)}
+.aktion .sub{margin-top:16px;max-width:46ch;font-size:1.2rem}
+.aktion .regeln{margin-top:16px;max-width:60ch}
+.praemien{list-style:none;padding:0;margin:32px 0 0;display:grid;gap:12px;grid-template-columns:1fr}
+@media (min-width:700px){.praemien{grid-template-columns:repeat(2,1fr)}}
+@media (min-width:1100px){.praemien{grid-template-columns:repeat(3,1fr)}}
+.praemien li{background:rgba(255,255,255,.6);border-radius:14px;padding:0 0 16px;overflow:hidden}
+.praemien li>*:not(img){margin-left:18px;margin-right:18px}
+.praemien img{display:block;width:100%;aspect-ratio:2/1;object-fit:cover;background:#f1f3f2;margin-bottom:14px}
+.praemien strong{display:block;font-size:1.15rem}
+.praemien .preis{display:block;margin-top:6px;font-weight:700;font-variant-numeric:tabular-nums}
+.praemien .beschr{display:block;margin-top:6px;font-size:.95rem}
+.aktion .knoepfe{display:flex;flex-wrap:wrap;gap:12px;margin-top:28px}
+.aktion .knopf{background:var(--zartbitter);color:#fff}
+.aktion .knopf.leise{background:transparent;color:var(--zartbitter)}
+.aktion .fuss-noten{margin-top:24px;font-size:.85rem;max-width:80ch}
+.aktion .teddy{right:2%;top:40px;width:min(240px,34vw)}
+@media (min-width:900px){.aktion .kopf-text{padding-right:clamp(200px,20vw,280px)}}
+@media (max-width:899px){.aktion .teddy{display:none}}
+
+/* REWE App: Mango, Schrift Zartbitter (Kontrast 7,7) */
+.app{background:var(--mango);color:var(--zartbitter);padding-bottom:calc(clamp(210px,24vw,300px) * 0.95 + 56px)}
+.app .innen{display:grid;gap:36px}
+.app h2{color:var(--zartbitter)}
+.app .sub{margin-top:16px;max-width:40ch;font-size:1.2rem}
+.app .knoepfe{display:flex;flex-wrap:wrap;gap:12px;margin-top:28px}
+.app .knopf{background:var(--zartbitter);color:#fff}
+.app .knopf.leise{background:transparent;color:var(--zartbitter)}
+.vorteile{list-style:none;margin:0;padding:0;display:grid;gap:14px}
+.vorteile li{background:rgba(255,255,255,.55);border-radius:14px;padding:14px 18px}
+.vorteile strong{display:block;font-size:1.1rem}
+.app .klein{font-size:.9rem;margin-top:16px;max-width:52ch}
+@media (min-width:900px){.app .innen{grid-template-columns:1.1fr 1fr;align-items:start;padding-right:clamp(200px,22vw,320px)}}
+
+/* Teddy stellt sich vor */
+.ich{background:var(--zartbitter);--w:clamp(210px,24vw,300px)}
+.ich p.satz{font-size:var(--t-statement);line-height:1.18;max-width:22ch;color:var(--zartbitter-10)}
+.ich .teddy{right:6%;top:calc(var(--w) * -0.934);width:var(--w)}
+.ich .teddy .ki{bottom:auto;top:30%}
+
+.ich .klein{margin-top:28px;max-width:46ch;color:#fff;opacity:.85;font-size:1rem}
+@media (max-width:899px){.ich{padding-top:calc(var(--w) * 0.62 + 48px)}}
+
+/* Teddy kocht: Dijon wie die Rezept-Karussells, Schrift Zartbitter (Kontrast 5,6) */
+.kochen{background:#c0972c;color:var(--zartbitter)}
+.kochen h2{color:var(--zartbitter)}
+.kochen .sub{margin-top:16px;max-width:40ch;font-size:1.2rem}
+.rezepte{display:grid;grid-template-columns:repeat(2,1fr);gap:16px;margin-top:36px;padding:0;list-style:none}
+@media (min-width:900px){.rezepte{grid-template-columns:repeat(4,1fr);gap:20px}}
+.rezepte a{display:block;text-decoration:none;color:inherit;border-radius:10px}
+.rezepte img{border-radius:10px;aspect-ratio:4/5;object-fit:cover;width:100%;transition:transform .2s ease}
+.rezepte a:hover img{transform:translateY(-4px)}
+.rezepte h3{font-size:1.25rem;font-weight:700;line-height:1.2;margin:12px 0 4px}
+.rezepte p{font-size:.95rem}
+
+/* Instagram */
+.insta{background:var(--pflaume);overflow:hidden}
+.insta h2{color:var(--pflaume-10)}
+.insta .sub{margin-top:16px;max-width:38ch;font-size:1.2rem}
+.raster{display:grid;grid-template-columns:repeat(2,1fr);gap:12px;margin:36px 0 32px}
+.raster{list-style:none;padding:0}
+.raster a{display:block;position:relative;border-radius:6px}
+.raster img{border-radius:6px;aspect-ratio:4/5;object-fit:cover;width:100%}
+.raster .reel{position:absolute;right:8px;top:8px;font-size:13px;line-height:1;padding:5px 9px;border-radius:999px;background:rgba(45,36,22,.72);color:#fff}
+@media (min-width:900px){.raster{grid-template-columns:repeat(3,1fr);max-width:760px;gap:16px}}
+.insta .teddy{right:3%;bottom:0;width:min(400px,64vw)}
+.insta .teddy img{filter:none}
+@media (max-width:899px){.insta{padding-bottom:320px}}
+
+/* Spielwelt */
+.spiel{background:var(--blaubeer)}
+.spiel h2{color:var(--blaubeer-10)}
+.spiel .innen{display:grid;gap:36px}
+.spielkarte{background:var(--blaubeer-10);color:var(--zartbitter);border-radius:28px;padding:28px;max-width:560px}
+.spielkarte h3{font-size:2rem;font-weight:400;line-height:1.05;margin:0 0 12px;color:var(--blaubeer)}
+.spielkarte .knopf{background:var(--blaubeer);color:#fff;margin-top:24px}
+.spiel .bald{margin-top:16px;opacity:.9}
+.spiel .teddy{right:2%;bottom:-70px;width:min(330px,52vw)}
+@media (min-width:900px){.spiel .innen{grid-template-columns:1fr 1fr;align-items:center;padding-right:clamp(220px,22vw,320px)}}
+@media (max-width:899px){.spiel{padding-bottom:340px}}
+
+/* Markt */
+.markt{background:var(--salbei);color:var(--zartbitter)}
+.markt h2{color:var(--salbei-10);text-shadow:0 1px 0 rgba(45,36,22,.25)}
+.markt .innen{display:grid;gap:40px}
+.markt dl{display:grid;grid-template-columns:auto 1fr;gap:6px 24px;margin:0;font-variant-numeric:tabular-nums}
+.markt dt{font-weight:700}
+.markt dd{margin:0}
+.markt ul{list-style:none;padding:0;margin:0;display:flex;flex-wrap:wrap;gap:10px}
+.markt li{background:var(--salbei-10);border-radius:999px;padding:8px 16px;font-size:1rem}
+.markt .knopf{background:var(--zartbitter);color:#fff}
+.markt h3{font-size:1.4rem;font-weight:700;margin:0 0 12px}
+.markt .teddy{right:2%;bottom:-24px;width:min(300px,52vw)}
+@media (min-width:900px){.markt .innen{grid-template-columns:1.2fr 1fr 1fr;padding-right:clamp(200px,22vw,320px)}}
+@media (max-width:899px){.markt{padding-bottom:300px}}
+
+/* Fuß */
+.fuss{background:var(--zartbitter);padding:110px var(--gutter) 48px;font-size:1rem}
+.fuss .innen{display:flex;flex-wrap:wrap;gap:20px 40px;justify-content:space-between}
+.fuss nav{display:flex;gap:24px}
+.fuss p{max-width:52ch;opacity:.85}
+</style>
+</head>
+<body>
+<a class="skip" href="#inhalt">Zum Inhalt springen</a>
+
+<header class="kopf">
+  <a href="#"><img class="logo" src="img/rewe-richter-logo-quer.svg" alt="REWE Richter" width="230" height="60"></a>
+  <nav aria-label="Hauptnavigation">
+    <a href="#prospekt">Prospekt</a>
+    <a href="#treuepunkte" id="nav-treuepunkte" hidden>Treuepunkte</a>
+    <a href="#app">App</a>
+    <a href="#rezepte">Rezepte</a>
+    <a href="#instagram">Instagram</a>
+    <a href="#spiel">Spiel</a>
+    <a href="#markt">Markt</a>
+  </nav>
+</header>
+
+<main id="inhalt">
+  <section class="buehne start" aria-labelledby="h-start">
+    <div class="innen">
+      <div class="text">
+        <h1 id="h-start">Teddys Angebote der Woche.</h1>
+        <p class="sub" id="gueltig">Alle Angebote der Woche in der Frohlinder Straße&nbsp;12, solange der Vorrat reicht.</p>
+        <div class="knoepfe">
+          <a class="knopf" href="#prospekt">Prospekt durchblättern</a>
+          <a class="knopf leise" href="#markt">Öffnungszeiten</a>
+        </div>
+      </div>
+      <div class="prospekt-szene">
+        <img class="titel" id="titelseite" src="prospekt/seite-01.jpg" width="800" height="1410" alt="Titelseite des aktuellen Prospekts von REWE Richter">
+        <div class="stoerer" id="status" role="status"><span>Heute geöffnet</span><small>bis 22 Uhr</small></div>
+        <figure class="teddy" data-bewegung="start" style="margin:0">
+          <img id="kopf-teddy" src="img/teddy-winkt-still.webp" data-animiert="img/teddy-winkt.webp" width="465" height="600" alt="Teddy Richter winkt und zeigt auf den Prospekt">
+          <span class="ki">KI-generiert</span>
+        </figure>
+      </div>
+    </div>
+  </section>
+
+  <section class="buehne blaettern" id="prospekt" aria-labelledby="h-prospekt">
+    <div class="innen">
+      <div class="kopfzeile">
+        <div>
+          <h2 id="h-prospekt">Einmal durchblättern.</h2>
+          <p id="prospekt-info">Alle Seiten des aktuellen Prospekts.</p>
+        </div>
+        <div class="pfeile">
+          <button type="button" data-richtung="-1" aria-label="Vorherige Seite">‹</button>
+          <button type="button" data-richtung="1" aria-label="Nächste Seite">›</button>
+        </div>
+      </div>
+      <div class="leiste" id="leiste" tabindex="0" aria-label="Prospektseiten, zum Vergrößern antippen"></div>
+      <div class="ersatz" id="ersatz" hidden>
+        <p>Der neue Prospekt ist gleich da. Bis dahin findest du alle Angebote auf der Marktseite bei rewe.de.</p>
+        <p style="margin-top:16px"><a class="knopf" href="https://www.rewe.de/angebote/dortmund/441708/rewe-frohlinder-str-12/" rel="noopener">Angebote auf rewe.de</a></p>
+      </div>
+      <p class="hinweis">Ab Sonntag siehst du hier schon den Prospekt für die nächste Woche. <a id="pdf" href="#" hidden>Prospekt als PDF herunterladen</a></p>
+      <dialog class="lupe" id="lupe" aria-label="Prospektseite vergrößert">
+        <img id="lupe-bild" src="" alt="">
+        <div class="steuer">
+          <button type="button" data-lupe="-1" aria-label="Vorherige Seite">‹</button>
+          <button type="button" data-lupe="0">Schließen</button>
+          <button type="button" data-lupe="1" aria-label="Nächste Seite">›</button>
+        </div>
+      </dialog>
+    </div>
+  </section>
+
+  <section class="buehne aktion" id="treuepunkte" aria-labelledby="h-aktion" hidden>
+    <div class="innen">
+      <div class="kopf-text">
+        <h2 id="h-aktion">Treuepunkte sammeln, Disney Geschirr sichern.</h2>
+        <p class="sub" id="aktion-untertitel"></p>
+        <p class="regeln" id="aktion-regeln"></p>
+      </div>
+      <ul class="praemien" id="aktion-praemien"></ul>
+      <div class="knoepfe">
+        <a class="knopf" id="aktion-link" href="#" rel="noopener">Alle Infos auf rewe.de</a>
+        <a class="knopf leise" id="aktion-flyer" href="#" rel="noopener">Infoflyer (PDF)</a>
+      </div>
+      <div class="fuss-noten" id="aktion-noten"></div>
+    </div>
+    <figure class="teddy" data-bewegung="heben" style="margin:0">
+      <img src="img/daumen.webp" width="598" height="885" alt="Teddy Richter zeigt den Daumen nach oben" loading="lazy">
+      <span class="ki">KI-generiert</span>
+    </figure>
+  </section>
+
+  <section class="buehne app" id="app" aria-labelledby="h-app">
+    <div class="innen">
+      <div>
+        <h2 id="h-app">Mehr sparen mit der REWE App.</h2>
+        <p class="sub">Die Angebote aus unserem Markt, dein REWE Bonus und vieles mehr: alles auf deinem Handy. Einfach REWE Richter als deinen Markt auswählen.</p>
+        <div class="knoepfe">
+          <a class="knopf" href="https://apps.apple.com/de/app/rewe-supermarkt/id714121079" rel="noopener">Im App Store laden</a>
+          <a class="knopf" href="https://play.google.com/store/apps/details?id=de.rewe.app.mobile&amp;hl=de" rel="noopener">Bei Google Play laden</a>
+        </div>
+        <p class="klein">Die REWE App ist ein Angebot der REWE Markt GmbH. <a href="https://www.rewe.de/service/app/" rel="noopener">Mehr zur App auf rewe.de</a></p>
+      </div>
+      <ul class="vorteile">
+        <li><strong>REWE Bonus</strong>Bei jedem Einkauf Bonus-Guthaben in Euro sammeln und später einlösen.</li>
+        <li><strong>Angebote deines Markts</strong>Alle aktuellen Angebote von REWE Richter, auf Wunsch mit Mitteilung.</li>
+        <li><strong>REWE Pay</strong>An der Kasse einmal scannen: bezahlen, Bonus und Treuepunkte in einem Schritt.</li>
+        <li><strong>Treuepunkte und eBon</strong>Treuepunkte digital sammeln, den Kassenbon gibt es digital dazu.</li>
+      </ul>
+    </div>
+  </section>
+
+  <section class="buehne ich" aria-label="Teddy Richter stellt sich vor">
+    <div class="innen">
+      <p class="satz">Ich bin Teddy Richter. Ich kenne jedes Regal in der Frohlinder Straße und zeige dir jede Woche, was sich lohnt.</p>
+      <p class="klein">Mal mit Angebot, mal mit Rezept, mal mit einem Spiel. Du triffst mich auf Instagram und hier.</p>
+    </div>
+    <figure class="teddy" data-bewegung="sitzen" style="margin:0">
+      <img src="img/sitzt-kante.webp" width="627" height="915" alt="Teddy Richter sitzt auf der Kante und lässt die Beine baumeln" loading="lazy">
+      <span class="ki">KI-generiert</span>
+    </figure>
+  </section>
+
+  <section class="buehne kochen" id="rezepte" aria-labelledby="h-kochen" hidden>
+    <div class="innen">
+      <h2 id="h-kochen">Teddy kocht.</h2>
+      <p class="sub">Jeden Dienstag und Freitag ein neues Rezept aus der REWE-Rezeptwelt. Hier sind die letzten vier.</p>
+      <ul class="rezepte" id="rezeptliste"></ul>
+    </div>
+  </section>
+
+  <section class="buehne insta" id="instagram" aria-labelledby="h-insta">
+    <div class="innen">
+      <h2 id="h-insta">Folg mir auf Instagram.</h2>
+      <p class="sub">Angebote, Rezepte am Dienstag und Freitag und jeden Tag eine Story aus dem Markt.</p>
+      <ul class="raster" id="insta-raster"></ul>
+      <a class="knopf" href="https://www.instagram.com/rewerichter/" rel="noopener">Zu @rewerichter</a>
+    </div>
+    <figure class="teddy" data-bewegung="heben" style="margin:0">
+      <img src="img/selfie.webp" width="909" height="917" alt="Teddy Richter macht ein Selfie und winkt" loading="lazy">
+      <span class="ki">KI-generiert</span>
+    </figure>
+  </section>
+
+  <section class="buehne spiel" id="spiel" aria-labelledby="h-spiel">
+    <div class="innen">
+      <div>
+        <h2 id="h-spiel">Spiel mit mir.</h2>
+        <p class="bald">Weitere Spiele sind in Arbeit.</p>
+      </div>
+      <article class="spielkarte">
+        <h3>Teddy Richter kauft ein</h3>
+        <p>Schnapp dir alles vom Einkaufszettel und ab zur Kasse. Jeden Sonntag startet eine neue Bestenliste.</p>
+        <a class="knopf" href="https://spiel.rewerichter.de">Jetzt spielen</a>
+      </article>
+    </div>
+    <figure class="teddy" data-bewegung="wippen" style="margin:0">
+      <img src="img/gamer.webp" width="687" height="1051" alt="Teddy Richter mit Headset und Controller" loading="lazy">
+      <span class="ki">KI-generiert</span>
+    </figure>
+  </section>
+
+  <section class="buehne markt" id="markt" aria-labelledby="h-markt">
+    <div class="innen">
+      <div>
+        <h2 id="h-markt">Hier findest du uns.</h2>
+        <p style="margin-top:20px">Frohlinder Straße 12<br>44379 Dortmund-Kirchlinde<br><a href="tel:+492316105822">0231 6105822</a></p>
+        <p style="margin-top:24px"><a class="knopf" href="https://www.google.com/maps/dir/?api=1&amp;destination=Frohlinder+Stra%C3%9Fe+12+44379+Dortmund" rel="noopener">Route planen</a></p>
+      </div>
+      <div>
+        <h3>Öffnungszeiten</h3>
+        <dl>
+          <dt>Markt</dt><dd>Mo bis Sa, 7 bis 22 Uhr</dd>
+          <dt>Bedientheke</dt><dd>bis 20 Uhr</dd>
+          <dt>Sonntag</dt><dd>geschlossen, ebenso an Feiertagen</dd>
+          <dt>Heiligabend</dt><dd>bis 14 Uhr</dd>
+          <dt>Silvester</dt><dd>bis 18 Uhr</dd>
+        </dl>
+      </div>
+      <div>
+        <h3>Bei uns im Markt</h3>
+        <ul>
+          <li>Bäckerei Malzers</li><li>Heiße Theke</li><li>Getränkemarkt</li><li>Parkplätze</li><li>Ladestation für E-Autos</li><li>Selbstbedienungskassen</li><li>Bargeld an der Kasse</li>
+        </ul>
+      </div>
+    </div>
+    <figure class="teddy" data-bewegung="fahren" style="margin:0">
+      <img src="img/einkaufswagen.webp" width="636" height="864" alt="Teddy Richter schiebt einen Einkaufswagen" loading="lazy">
+      <span class="ki">KI-generiert</span>
+    </figure>
+  </section>
+</main>
+
+<footer class="fuss">
+  <div class="innen">
+    <p>REWE Markt Richter ist ein selbstständiger REWE-Kaufmann. Die Bilder von Teddy Richter sind KI-generiert.</p>
+    <nav aria-label="Rechtliches"><a href="impressum.html">Impressum</a><a href="datenschutz.html">Datenschutz</a></nav>
+  </div>
+</footer>
+
+<script>
+// ---- Kopf-Teddy: erst Standbild, nach dem Laden die Animation (nicht bei „weniger Bewegung“ oder Datensparen) ----
+addEventListener('load',()=>{
+  const el=document.getElementById('kopf-teddy');
+  if(!el||matchMedia('(prefers-reduced-motion: reduce)').matches||(navigator.connection&&navigator.connection.saveData)) return;
+  const anim=new Image(); anim.onload=()=>{el.src=anim.src}; anim.src=el.dataset.animiert;
+});
+
+// ---- Deutsche Zeit und Öffnungszeiten ----
+const ZEITEN={auf:7,zu:22};           // Mo–Sa 7–22 Uhr, sonntags und an Feiertagen geschlossen
+const SONDER={'12-24':{zu:14},'12-31':{zu:18}};  // Heiligabend bis 14 Uhr, Silvester bis 18 Uhr (fallen sie auf einen Sonntag, bleibt zu)
+function berlin(d=new Date()){
+  const t=Object.fromEntries(new Intl.DateTimeFormat('en-CA',{timeZone:'Europe/Berlin',year:'numeric',month:'2-digit',day:'2-digit',hour:'2-digit',minute:'2-digit',hourCycle:'h23'}).formatToParts(d).map(x=>[x.type,x.value]));
+  return {datum:new Date(Date.UTC(+t.year,+t.month-1,+t.day)),min:(+t.hour)*60+(+t.minute)};
+}
+function ostern(j){const a=j%19,b=Math.floor(j/100),c=j%100,d=Math.floor(b/4),e=b%4,f=Math.floor((b+8)/25),g=Math.floor((b-f+1)/3),h=(19*a+b-d-g+15)%30,i=Math.floor(c/4),k=c%4,l=(32+2*e+2*i-h-k)%7,m=Math.floor((a+11*h+22*l)/451),mo=Math.floor((h+l-7*m+114)/31),ta=((h+l-7*m+114)%31)+1;return new Date(Date.UTC(j,mo-1,ta));}
+const plus=(d,n)=>new Date(d.getTime()+n*864e5), iso=d=>d.toISOString().slice(0,10);
+function feiertag(d){                 // gesetzliche Feiertage NRW
+  const j=d.getUTCFullYear(), o=ostern(j), md=iso(d).slice(5);
+  return ['01-01','05-01','10-03','11-01','12-25','12-26'].includes(md) || [-2,1,39,50,60].some(n=>iso(plus(o,n))===iso(d));
+}
+function zeitenAm(d){
+  if(d.getUTCDay()===0||feiertag(d)) return null;
+  return Object.assign({},ZEITEN,SONDER[iso(d).slice(5)]||{});
+}
+const TAGE=['Sonntag','Montag','Dienstag','Mittwoch','Donnerstag','Freitag','Samstag'];
+const uhr=h=>String(h).padStart(1,'0')+':00 Uhr';
+
+// Geöffnet-Störer: immer aktuell, prüft jede halbe Minute
+function stoererAktualisieren(){
+  const el=document.getElementById('status'); if(!el) return;
+  const {datum,min}=berlin(), heute=zeitenAm(datum);
+  let gross,klein;
+  if(heute && min>=heute.auf*60 && min<heute.zu*60){gross='Jetzt geöffnet';klein='bis '+uhr(heute.zu)}
+  else if(heute && min<heute.auf*60){gross='Heute geht’s los';klein='um '+uhr(heute.auf)}
+  else{
+    let n=1; while(!zeitenAm(plus(datum,n))&&n<8) n++;
+    const z=zeitenAm(plus(datum,n));
+    gross=(n===1?'Morgen':TAGE[plus(datum,n).getUTCDay()])+' geht’s weiter';
+    klein='um '+uhr(z.auf);
+  }
+  el.innerHTML='<span>'+gross+'</span><small>'+klein+'</small>';
+}
+stoererAktualisieren(); setInterval(stoererAktualisieren,30000);
+document.addEventListener('visibilitychange',()=>{if(!document.hidden) stoererAktualisieren()});
+
+// ---- Prospekt aus prospekt.json (wird jeden Sonntag um 0 Uhr automatisch geholt) ----
+const MONATE=['Januar','Februar','März','April','Mai','Juni','Juli','August','September','Oktober','November','Dezember'];
+const lang=s=>{const d=new Date(s+'T00:00:00Z');return d.getUTCDate()+'. '+MONATE[d.getUTCMonth()]};
+fetch('prospekt/prospekt.json',{cache:'no-cache'}).then(r=>r.ok?r.json():Promise.reject()).then(p=>{
+  const heute=iso(berlin().datum);
+  if(heute>p.gueltig_bis) return Promise.reject();           // abgelaufen: lieber Link zu rewe.de
+  const vorschau=heute<p.gueltig_von;
+  if(vorschau) document.getElementById('h-start').textContent='Teddys Angebote ab Montag.';
+  document.getElementById('gueltig').innerHTML='Gültig vom '+(p.gueltig_von.slice(5,7)===p.gueltig_bis.slice(5,7)?lang(p.gueltig_von).replace(/ \S+$/,''):lang(p.gueltig_von))+' bis '+lang(p.gueltig_bis)+' in der Frohlinder Straße&nbsp;12, solange der Vorrat reicht.';
+  document.getElementById('prospekt-info').textContent=p.seiten.length+' Seiten, gültig bis Samstag, '+lang(p.gueltig_bis)+'.';
+  document.getElementById('titelseite').alt='Titelseite des Prospekts von REWE Richter, Kalenderwoche '+p.kw;
+  const l=document.getElementById('leiste');
+  l.innerHTML=p.seiten.map((s,i)=>'<figure><button type="button" data-seite="'+i+'" aria-label="Seite '+s.nr+' vergrößern"><img src="'+s.klein+'" width="800" height="1410" alt="Prospekt Seite '+s.nr+'"'+(i>1?' loading="lazy"':'')+'></button><figcaption>Seite '+s.nr+'</figcaption></figure>').join('');
+  if(p.pdf){const a=document.getElementById('pdf');a.href=p.pdf;a.hidden=false;a.rel='noopener'}
+  // Vergrößern
+  const dlg=document.getElementById('lupe'), bild=document.getElementById('lupe-bild'); let akt=0;
+  const zeige=i=>{akt=(i+p.seiten.length)%p.seiten.length;bild.src=p.seiten[akt].gross;bild.alt='Prospekt Seite '+p.seiten[akt].nr};
+  l.addEventListener('click',e=>{const b=e.target.closest('[data-seite]');if(b){zeige(+b.dataset.seite);dlg.showModal()}});
+  dlg.addEventListener('click',e=>{const b=e.target.closest('[data-lupe]');if(!b){if(e.target===dlg)dlg.close();return}const r=+b.dataset.lupe;r?zeige(akt+r):dlg.close()});
+  dlg.addEventListener('keydown',e=>{if(e.key==='ArrowRight')zeige(akt+1);if(e.key==='ArrowLeft')zeige(akt-1)});
+}).catch(()=>{
+  document.getElementById('leiste').hidden=true;
+  document.querySelector('.pfeile').hidden=true;
+  document.getElementById('ersatz').hidden=false;
+  document.querySelector('.prospekt-szene .titel').hidden=true;
+});
+
+// ---- Treuepunkt-Aktion: alle Texte wortgetreu aus der Quelle, nach dem Einlöse-Datum ausblenden ----
+Promise.all([fetch('aktion/treuepunkte.json',{cache:'no-cache'}).then(r=>r.ok?r.json():Promise.reject()),fetch('aktion/bilder.json',{cache:'no-cache'}).then(r=>r.ok?r.json():[]).catch(()=>[])]).then(([q,bilder])=>{
+  const bild=Object.fromEntries(bilder.map(b=>[b.praemie,b]));   // Zuordnung über den Prämiennamen, nie über die Reihenfolge
+  const m=/bis zum (\d\d)\.(\d\d)\.(\d{4}) in deinem REWE Markt einlösen/.exec(q.regeln);
+  if(!m) return;
+  if(iso(berlin().datum)>m[3]+'-'+m[2]+'-'+m[1]) return;     // Aktion vorbei
+  const esc=s=>String(s).replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
+  document.getElementById('aktion-untertitel').textContent=q.untertitel;
+  document.getElementById('aktion-regeln').textContent=q.regeln+' '+q.hinweis;
+  document.getElementById('aktion-praemien').innerHTML=q.praemien.map(p=>'<li>'+(bild[p.praemie]?'<img src="'+esc(bild[p.praemie].datei)+'" width="618" height="309" loading="lazy" alt="'+esc(bild[p.praemie].alt)+'">':'')+'<strong>'+esc(p.praemie)+'</strong><span class="preis">'+esc(p.preiszeile)+'</span><span class="beschr">'+esc(p.beschreibung)+'</span></li>').join('');
+  document.getElementById('aktion-link').href=q.quelle_url;
+  if(q.infoflyer) document.getElementById('aktion-flyer').href=q.infoflyer; else document.getElementById('aktion-flyer').hidden=true;
+  document.getElementById('aktion-noten').innerHTML='<p>'+esc(q.fussnote_stern)+'</p><p>'+esc(q.fussnote_zwei_sterne)+'</p><p>Quelle: rewe.de.</p>';
+  document.getElementById('treuepunkte').hidden=false;
+  document.getElementById('nav-treuepunkte').hidden=false;
+}).catch(()=>{});
+
+// ---- Instagram: neueste Beiträge ohne Angebote (Angebote stehen schon im Prospekt) ----
+fetch('instagram/instagram.json',{cache:'no-cache'}).then(r=>r.ok?r.json():[]).then(liste=>{
+  if(!liste.length) return;
+  const esc=s=>String(s).replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
+  document.getElementById('insta-raster').innerHTML=liste.map(b=>'<li><a href="'+esc(b.link)+'" rel="noopener"><img src="'+esc(b.bild)+'" width="540" height="675" loading="lazy" alt="Instagram-Beitrag: '+esc(b.text)+'">'+(b.typ==='reel'?'<span class="reel">Video</span>':'')+'</a></li>').join('');
+}).catch(()=>{});
+
+// ---- Teddy kocht: die neuesten vier Rezepte, die schon auf Instagram sind ----
+fetch('rezepte/rezepte.json',{cache:'no-cache'}).then(r=>r.ok?r.json():[]).then(liste=>{
+  const jetzt=Date.now();
+  const zeigen=liste.filter(r=>Date.parse(r.zeit)<=jetzt).sort((a,b)=>Date.parse(b.zeit)-Date.parse(a.zeit)).slice(0,4);
+  if(!zeigen.length) return;
+  const esc=s=>String(s).replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
+  document.getElementById('rezeptliste').innerHTML=zeigen.map(r=>{
+    const info=r.info||'';
+    return '<li><a href="'+esc(r.url)+'" rel="noopener"><img src="'+esc(r.bild)+'" width="540" height="675" loading="lazy" alt="Teddy kocht: '+esc(r.name)+'"><h3>'+esc(r.name)+'</h3><p>'+(info?esc(info)+'. ':'')+'Zum Rezept auf rewe.de</p></a></li>';
+  }).join('');
+  document.getElementById('rezepte').hidden=false;
+}).catch(()=>{});
+
+// Teddys bewegen sich beim Scrollen leicht mit (nur ohne „weniger Bewegung“)
+(function(){
+  if(matchMedia('(prefers-reduced-motion: reduce)').matches) return;
+  const start=document.querySelector('.start');
+  const figs=[...document.querySelectorAll('.teddy[data-bewegung]')];
+  const clamp=v=>Math.min(1,Math.max(0,v)), weich=v=>v*v*(3-2*v);
+  let geplant=false;
+  function rechnen(){
+    geplant=false;
+    const vh=innerHeight;
+    for(const f of figs){
+      let p;
+      if(f.dataset.bewegung==='start'){p=clamp(scrollY/(vh*.8)); start.style.setProperty('--hp',p.toFixed(3));}
+      else{const r=f.getBoundingClientRect(); p=weich(clamp((vh-r.top)/(vh*.55)));}
+      f.style.setProperty('--p',p.toFixed(3));
+    }
+  }
+  const anstossen=()=>{if(!geplant){geplant=true;requestAnimationFrame(rechnen);}};
+  addEventListener('scroll',anstossen,{passive:true});
+  addEventListener('resize',anstossen);
+  rechnen();
+})();
+// Prospekt-Leiste mit Knöpfen blättern
+document.querySelectorAll('.pfeile button').forEach(b=>b.addEventListener('click',()=>{
+  const l=document.getElementById('leiste'); const f=l.querySelector('figure');
+  l.scrollBy({left:(+b.dataset.richtung)*(f.offsetWidth+20),behavior:matchMedia('(prefers-reduced-motion: reduce)').matches?'auto':'smooth'});
+}));
+</script>
+</body>
+</html>
